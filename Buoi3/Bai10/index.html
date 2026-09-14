@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>To-Do Lists</h1>
+
+    <input type="text" id="txt" placeholder="Nhap cong viec cua ban..." />
+    <button onclick="addToDo()">Them cong viec</button>
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Hoàn thành</th>
+                <th>Tên công việc</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="bodyTable">
+        </tbody>
+    </table>
+
+    <script>
+        function loadToDos() {
+            fetch('toDo.php?action=get')
+                .then(res => res.json())
+                .then(data => renderToDos(data));
+        }
+
+        function renderToDos(data) {
+            let tbody = document.getElementById('bodyTable');
+            if (!data || data.length == 0) {
+                tbody.innerHTML = `<tr><td colspan="4">Chưa có công việc nào</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((item, index) => {
+                let isChecked = item.completed ? 'checked' : '';
+                let taskName = item.completed ? `<s>${item.name}</s>` : item.name;
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <input type="checkbox" ${isChecked} onchange="toggleToDo('${item.id}')">
+                        </td>
+                        <td>${taskName}</td>
+                        <td>
+                            <button onclick="deleteToDo('${item.id}')">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function addToDo() {
+            let input = document.getElementById('txt');
+            let name = input.value.trim();
+            if (name == '') {
+                alert('Vui lòng nhập tên công việc của bạn!');
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append('action', 'add');
+            formData.append('name', name);
+            fetch('toDo.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(
+                    data => {
+                        input.value = '';
+                        renderToDos(data);
+                    }
+                )
+        }
+
+        function toggleToDo(id) {
+            let formData = new FormData();
+            formData.append('action', 'toggle');
+            formData.append('id', id);
+
+            fetch('toDo.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => renderToDos(data));
+        }
+
+        function deleteToDo(id) {
+            let formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', id);
+
+            fetch('toDo.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => renderToDos(data));
+        }
+
+        loadToDos();
+    </script>
+</body>
+
+</html>

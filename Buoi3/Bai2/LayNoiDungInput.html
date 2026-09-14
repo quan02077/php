@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="txt" placeholder="Nhap noi dung..."/>
+    <button onclick="getTxt()">Lay noi dung</button>
+    <h4 id="output"></h4>
+    <script>
+        function getTxt() {
+            let txt = document.getElementById("txt").value;
+            document.getElementById("output").innerText = txt;
+        }
+    </script>
+</body>
+</html>
