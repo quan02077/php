@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateStationsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('stations', function (Blueprint $table) {
+            $table->id();
+            $table->string('station_name');
+            $table->string('address');
+            $table->string('ward');
+            $table->integer('total_docks');
+            $table->string('status');
+            $table->float('avg_rating')->default(0);
+            $table->integer('total_reviews')->default(0);
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('stations');
+    }
+}
